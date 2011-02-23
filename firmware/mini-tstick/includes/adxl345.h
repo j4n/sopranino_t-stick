@@ -14,6 +14,7 @@
 #include "utils.h"
 #include "twimaster.h"
 
+#define ADXL345_ADDR 0xA6 // SDO tied to GND
 
 void adxl345_init(void);
 uint8_t adxl345_read(uint8_t register_name);

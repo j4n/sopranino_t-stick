@@ -29,6 +29,8 @@ char buffer[10]; // buffer for sprintf/atoi, max 65535+\0+label+:+tab
 const char sensor_labels[SENSOR_COUNT] = "ABCDEFGHI";
 // which of those channels are ADCs (some are read via SPI)
 const uint8_t adc_ids[ADC_COUNT] = {0,1,2,3,4,5};
+// which ADCs to sample
+const uint8_t adcs[ADC_COUNT] = {0,1,2,3,6,7};
 // which of those are adxl345 channels
 const uint8_t adxl345_ids[3] = {6,7,8};
 

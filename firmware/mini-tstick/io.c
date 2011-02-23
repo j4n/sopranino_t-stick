@@ -28,8 +28,8 @@ void adc_init() {
 	 * p260: Note that ADC pins ADC7 and ADC6 do not have digital input
 	 * buffers, and therefore do not require Digital Input Disable bits.
 	 */
-	ADC_PORT = 0x00;
-	ADC_PORT_REGISTER = 0x00;
+	ADC_PORT = ADC_PORT_MASK;
+	ADC_PORT_REGISTER = ADC_PORT_MASK;
 
 	/* unless otherwise configured, arduinos use the internal Vcc
 	 * reference. MUX 0x0f samples the ground (0.0V). */

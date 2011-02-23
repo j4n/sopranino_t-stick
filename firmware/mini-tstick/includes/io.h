@@ -13,6 +13,7 @@
 
 #define ADC_PORT PORTC
 #define ADC_PORT_REGISTER DDRC
+#define ADC_PORT_MASK 0b00110000 // which ports are used as adcs, exclude i2c pins 4+5
 
 void led_init (void);
 void led_on(void);

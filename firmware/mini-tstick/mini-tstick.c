@@ -3,7 +3,7 @@
  *
  *  Created by Jan Anlauff <janlauff at cim dot mcgill dot ca> (C) 2011
  *  ADXL345 functionality based on code from Sebastian Zehe
- *  I2C master code by Peter Fleury 
+ *  I2C master library by Peter Fleury 
  */
 
 #include "includes/mini-tstick.h"
@@ -36,7 +36,7 @@ void init(void) {
 
 void sample_adcs() {
 	for(uint8_t adc_id = 0; adc_id < ADC_COUNT; adc_id++) {
-		values[adc_ids[adc_id]] = adc_read(adc_id);
+		values[adc_ids[adc_id]] = adc_read(adcs[adc_id]);
 	}
 }
 
