@@ -11,6 +11,7 @@
 #include <stdlib.h>
 
 #include "adxl345.h"
+#include "cy8c20180.h"
 #include "io.h"
 #include "twimaster.h"
 #include "uart.h"

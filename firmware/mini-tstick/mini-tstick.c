@@ -14,7 +14,7 @@ int main(void) {
 		incoming_char = uart_getc_wait();
 		sample_adcs();
 		led_off();
-		sample_adxl345();
+		//sample_adxl345();
 		led_on();
 		_delay_ms(1);
 		uart_transfer_values_csv();
@@ -31,6 +31,7 @@ void init(void) {
 	adc_init();
 	twi_init();
 	adxl345_init();
+	cy8c20180_config();
 	led_on();
 }
 
