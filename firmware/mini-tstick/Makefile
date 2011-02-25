@@ -18,7 +18,7 @@ TARGET = mini-tstick
 
 # c sourcecode files
 # eg. 'test.c foo.c foobar/baz.c'
-SRC = mini-tstick.c twimaster.c uart.c adxl345.c io.c utils.c fifo.c
+SRC = mini-tstick.c twimaster.c uart.c adxl345.c io.c utils.c fifo.c cy8c20180.c
 # asm sourcecode files
 # eg. 'interrupts.S foobar/another.S'
 ASRC = 
