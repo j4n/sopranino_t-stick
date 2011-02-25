@@ -1,3 +1,4 @@
+// vi:ft=c
 // Test program for reading CY8C201xx using I2C
 // Joseph Malloch 2011
 // Input Devices and Music Interaction Lab
@@ -6,6 +7,7 @@
 // http://www.cypress.com/?docID=24620
 
 // include Wire library to read and write I2C commands:
+
 #include <Wire.h>
 
 int xres = 5;  // XRES pin on one of the CY8C201xx chips is connected to Arduino pin 13
@@ -27,6 +29,7 @@ byte delimiterChar = 100;
 #define I2C_ADDR_DM 0x7C
 #define COMMAND_REG 0xA0
 
+#define DEBUG_DELAY 300
 // Secret codes for locking/unlocking the I2C_DEV_LOCK register
 byte I2CDL_KEY_UNLOCK[3] = {0x3C, 0xA5, 0x69};
 byte I2CDL_KEY_LOCK[3] = {0x96, 0x5A, 0xC3};
@@ -47,79 +50,65 @@ void setup() {
 
 
   // CONFIGURE CHIP #2
-    // chip #2: switch to setup mode
-    Wire.beginTransmission(I2C_ADDR0);
-    Wire.send(COMMAND_REG);
-    Wire.send(0x08);
-    Wire.endTransmission();
-    
-    // chip #2: setup CS_ENABLE0 register
-    Wire.beginTransmission(I2C_ADDR0);
-    Wire.send(CS_ENABLE0);
-    Wire.send(B00001111);
-    Wire.endTransmission();
-    
-    // chip #2: setup CS_ENABLE1 register
-    Wire.beginTransmission(I2C_ADDR0);
-    Wire.send(CS_ENABLE1);
-    Wire.send(B00001111);
-    Wire.endTransmission();
-    
-    // chip #2: switch to normal mode
-    Wire.beginTransmission(I2C_ADDR0);
-    Wire.send(COMMAND_REG);
-    Wire.send(0x07);
-    Wire.endTransmission();
+
+  delay(DEBUG_DELAY);
+  // chip #2: unlock the I2C_DEV_LOCK register
+  Wire.beginTransmission(I2C_ADDR0);
+  Wire.send(I2C_DEV_LOCK);
+  Wire.send(I2CDL_KEY_UNLOCK, 3);
+  Wire.endTransmission();
   
-    // chip #2: unlock the I2C_DEV_LOCK register
-    Wire.beginTransmission(I2C_ADDR0);
-    Wire.send(I2C_DEV_LOCK);
-    Wire.send(I2CDL_KEY_UNLOCK, 3);
-    Wire.endTransmission();
-    
-    // chip #2: change the I2C_ADDR_DM register to I2C_ADDR1
-    Wire.beginTransmission(I2C_ADDR0);
-    Wire.send(I2C_ADDR_DM);
-    Wire.send(I2C_ADDR1);
-    Wire.endTransmission();
-    
-    // chip #2: lock register again for change to take effect
-    Wire.beginTransmission(I2C_ADDR0);
-    Wire.send(I2C_DEV_LOCK);
-    Wire.send(I2CDL_KEY_LOCK, 3);
-    Wire.endTransmission();
-    // chip #2 now has the I2C address I2C_ADDR1
+  delay(DEBUG_DELAY);
+  // chip #2: change the I2C_ADDR_DM register to I2C_ADDR1
+  Wire.beginTransmission(I2C_ADDR0);
+  Wire.send(I2C_ADDR_DM);
+  Wire.send(I2C_ADDR1);
+  Wire.endTransmission();
+  
+  delay(DEBUG_DELAY);
+  // chip #2: lock register again for change to take effect
+  Wire.beginTransmission(I2C_ADDR0);
+  Wire.send(I2C_DEV_LOCK);
+  Wire.send(I2CDL_KEY_LOCK, 3);
+  Wire.endTransmission();
+  // chip #2 now has the I2C address I2C_ADDR1
 
+  delay(DEBUG_DELAY);
   // CONFIGURE CHIP #1
-    // let the chip #1 wake up again
-    digitalWrite(xres, LOW);
+  // let the chip #1 wake up again
+  digitalWrite(xres, LOW);
 
-    delay(200);
-//    
-    // chip #1: switch to setup mode
-    Wire.beginTransmission(I2C_ADDR0);
+  delay(200);
+ //    
+  for (uint8_t id=0; id<2; id++) {
+    // switch to setup mode
+    Wire.beginTransmission(id);
     Wire.send(COMMAND_REG);
     Wire.send(0x08);
     Wire.endTransmission();
+    delay(DEBUG_DELAY);
     
-    // chip #1: setup CS_ENABLE0 register
-    Wire.beginTransmission(I2C_ADDR0);
+    // setup CS_ENABLE0 register
+    Wire.beginTransmission(id);
     Wire.send(CS_ENABLE0);
     Wire.send(B00001111);
     Wire.endTransmission();
+    delay(DEBUG_DELAY);
     
-    // chip #1: setup CS_ENABLE1 register
-    Wire.beginTransmission(I2C_ADDR0);
+    // setup CS_ENABLE1 register
+    Wire.beginTransmission(id);
     Wire.send(CS_ENABLE1);
     Wire.send(B00001111);
     Wire.endTransmission();
+    delay(DEBUG_DELAY);
     
-    // chip #1: switch to normal mode
-    Wire.beginTransmission(I2C_ADDR0);
+    // switch to normal mode
+    Wire.beginTransmission(id);
     Wire.send(COMMAND_REG);
     Wire.send(0x07);
     Wire.endTransmission();
-    
+    delay(DEBUG_DELAY);
+  }
 }
 
 void loop() {
