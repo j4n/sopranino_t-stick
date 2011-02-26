@@ -3,88 +3,108 @@
 // connected to the XRES pin
 // based on Joseph Mallochs example code
 // (c) 2011 Jan Anlauf <janlauff <at> cim <dot> mcgill <dot> ca>
+//
+// Explanation on Chip IDs:
+//  Chip #0 is the lower chip, responsible for channels 0-7
+//  Chip #1 is the upper chip, responsible for channels 8-15
 
 #include "includes/cy8c20180.h"
 
 void cy8c20180_config(void) {
-	XRES_PORT_REGISTER |= _BV(XRES_PIN);
+	//  First, we will configure the chip addresses
+	//  Chip #0 will be disabled to make Chip #1 be the only one with address 0x00
+	//  Then Chip #1 aka. 0x00 will be set to have address 0x01, and finally
+	//  Chip #0 will be enabled again.
 
-	// put chip #0 in reset/deactivate it
+
+	// put chip #0 in reset/deactivate it by pulling XRES_PIN low
+	XRES_PORT_REGISTER |= _BV(XRES_PIN);
 	XRES_PORT |= _BV(XRES_PIN);
 
   long_delay(200);
 
-//  // CONFIGURE CHIP #2
-//
-//  delay(DEBUG_DELAY);
-//  // chip #2: unlock the I2C_DEV_LOCK register
-//  Wire.beginTransmission(I2C_ADDR0);
-//  Wire.send(I2C_DEV_LOCK);
-//  Wire.send(I2CDL_KEY_UNLOCK, 3);
-//  Wire.endTransmission();
-//  
-//  delay(DEBUG_DELAY);
-//  // chip #2: change the I2C_ADDR_DM register to I2C_ADDR1
-//  Wire.beginTransmission(I2C_ADDR0);
-//  Wire.send(I2C_ADDR_DM);
-//  Wire.send(I2C_ADDR1);
-//  Wire.endTransmission();
-//  
-//  delay(DEBUG_DELAY);
-//  // chip #2: lock register again for change to take effect
-//  Wire.beginTransmission(I2C_ADDR0);
-//  Wire.send(I2C_DEV_LOCK);
-//  Wire.send(I2CDL_KEY_LOCK, 3);
-//  Wire.endTransmission();
-//  // chip #2 now has the I2C address I2C_ADDR1
-//
-//  delay(DEBUG_DELAY);
-//  // CONFIGURE CHIP #1
-//  // let the chip #1 wake up again
-//  digitalWrite(xres, LOW);
-//
-//  delay(200);
-// //    
-//  for (uint8_t id=0; id<2; id++) {
-//    // switch to setup mode
-//    Wire.beginTransmission(id);
-//    Wire.send(COMMAND_REG);
-//    Wire.send(0x08);
-//    Wire.endTransmission();
-////    delay(DEBUG_DELAY);
-//    
-//    // setup CS_ENABLE0 register
-//    Wire.beginTransmission(id);
-//    Wire.send(CS_ENABLE0);
-//    Wire.send(B00001111);
-//    Wire.endTransmission();
-// //   delay(DEBUG_DELAY);
-//    
-//    // setup CS_ENABLE1 register
-//    Wire.beginTransmission(id);
-//    Wire.send(CS_ENABLE1);
-//    Wire.send(B00001111);
-//    Wire.endTransmission();
-////    delay(DEBUG_DELAY);
-//    
-//    // switch to normal mode
-//    Wire.beginTransmission(id);
-//    Wire.send(COMMAND_REG);
-//    Wire.send(0x07);
-//    Wire.endTransmission();
-//  //  delay(DEBUG_DELAY);
-//  }
-//
+  // CONFIGURE CHIP #1
+
+	// unlock the I2C_DEV_LOCK register with magic codes
+	twi_start(I2C_ADDR0);
+	twi_write(I2C_DEV_LOCK);
+  twi_write(0x3C);
+  twi_write(0xA5);
+  twi_write(0x69);
+	twi_stop();
+
+  // chip #2: change the I2C_ADDR_DM register to I2C_ADDR1
+	twi_start(I2C_ADDR0);
+  twi_write(I2C_ADDR_DM);
+	twi_write(I2C_ADDR1);
+	twi_stop();
+
+  // chip #2: lock register again for change to take effect
+	twi_start(I2C_ADDR0);
+	twi_write(I2C_DEV_LOCK);
+  twi_write(0x96);
+  twi_write(0x5A);
+  twi_write(0xC3);
+	twi_stop();
+
+  // chip #2 now has the I2C address I2C_ADDR1
+
 	// activate chip #0 again
 	XRES_PORT &= ~_BV(XRES_PIN);
 
+	// configure capsense ports for both chips, 0x00 & 0x01
+  for (uint8_t id=0; id<2; id++) {
+    // switch to setup mode
+		twi_start(id);
+		twi_write(COMMAND_REG);
+		twi_write(0x08);
+		twi_stop();
+    
+    // setup CS_ENABLE0 register
+    twi_start(id);
+    twi_write(CS_ENABLE0);
+    twi_write(0x0F);
+    twi_stop();
+ //   delay(DEBUG_DELAY);
+    
+    // setup CS_ENABLE1 register
+    twi_start(id);
+    twi_write(CS_ENABLE1);
+    twi_write(0x0F);
+    twi_stop();
+//    delay(DEBUG_DELAY);
+    
+    // switch to normal mode
+    twi_start(id);
+    twi_write(COMMAND_REG);
+    twi_write(0x07);
+    twi_stop();
+  //  delay(DEBUG_DELAY);
+  }
 }
 
 
-uint8_t* cy8c20180_read(void) {
-//	twi_start(ADXL345_ADDR + I2C_WRITE);
-//	twi_write(register_name);
-//	twi_write(value);
-//	twi_stop();
+uint8_t cy8c20180_read(uint8_t address) {
+  uint8_t ret = 0x00;
+  
+  // request Register 00h: INPUT_PORT0
+  twi_start(address);
+  twi_write(INPUT_PORT0);
+  twi_stop();
+  
+//  Wire.requestFrom(address, 1);
+//  while (!Wire.available()) {}
+//  ret = Wire.receive() << 4;
+//  
+//  // request Register 01h: INPUT_PORT1
+//  twi_start(address);
+//  Wire.send(INPUT_PORT1);
+//  twi_stop();
+  
+//  Wire.requestFrom(address, 1);
+//  while (!Wire.available()) {}
+ // ret |= Wire.receive();
+  
+  return ret;
 }
 
