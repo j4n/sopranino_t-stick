@@ -103,7 +103,7 @@ uint8_t cy8c20180_read(uint8_t address) {
 	ret = twi_readNak() << 4;
   twi_stop();
 
-	if (address == 0) { ret |= 1 << 4; }
+//	if (address == 0) { ret |= 1 << 4; }
 
   // request Register 01h: INPUT_PORT1
   twi_start(address);

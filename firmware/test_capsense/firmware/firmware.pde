@@ -86,28 +86,28 @@ void setup() {
     Wire.send(COMMAND_REG);
     Wire.send(0x08);
     Wire.endTransmission();
-//    delay(DEBUG_DELAY);
+    delay(DEBUG_DELAY);
     
     // setup CS_ENABLE0 register
     Wire.beginTransmission(id);
     Wire.send(CS_ENABLE0);
     Wire.send(B00001111);
     Wire.endTransmission();
- //   delay(DEBUG_DELAY);
+    delay(DEBUG_DELAY);
     
     // setup CS_ENABLE1 register
     Wire.beginTransmission(id);
     Wire.send(CS_ENABLE1);
     Wire.send(B00001111);
     Wire.endTransmission();
-//    delay(DEBUG_DELAY);
+    delay(DEBUG_DELAY);
     
     // switch to normal mode
     Wire.beginTransmission(id);
     Wire.send(COMMAND_REG);
     Wire.send(0x07);
     Wire.endTransmission();
-  //  delay(DEBUG_DELAY);
+    delay(DEBUG_DELAY);
   }
 }
 
