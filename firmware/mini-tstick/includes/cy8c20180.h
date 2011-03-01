@@ -29,8 +29,6 @@
 #define I2C_ADDR_DM 0x7C
 #define COMMAND_REG 0xA0
 
-
-
 void cy8c20180_config (void);
 uint8_t cy8c20180_read (uint8_t address);
 

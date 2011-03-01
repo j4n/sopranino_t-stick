@@ -17,9 +17,10 @@ int main(void) {
 	while (1) {
 		incoming_char = uart_getc_wait();
 		sample_adcs();
-		led_off();
+		//led_off();
 		//sample_adxl345();
-		led_on();
+		//led_on();
+		sample_capsense();
 		_delay_ms(1);
 		uart_transfer_values_csv();
 	}
@@ -36,8 +37,8 @@ void init(void) {
 	adc_init();
 	twi_init();
 	adxl345_init();
-	//cy8c20180_config();
-	led_on();
+	cy8c20180_config();
+	//led_on();
 }
 
 void sample_adcs() {
@@ -51,9 +52,10 @@ void sample_adxl345(void) {
 }
 
 void sample_capsense() {
-	for (uint8_t addr=0; addr<=1; addr++) {
-		capsense_values[addr] = cy8c20180_read(addr);
-	}
+//	for (uint8_t addr=0; addr<=1; addr++) {
+		capsense_values[0] = cy8c20180_read(0);
+		capsense_values[1] = cy8c20180_read(1);
+//	}
 }
 
 void uart_transfer_values_csv(void) {
@@ -84,17 +86,14 @@ void uart_transfer_values_csv(void) {
 }
 
 void zero_arrays(void) {
-	// print adc
 	for(uint8_t adc = 0; adc < ADC_COUNT; adc++) {
 		adc_values[adc] = 17;
 	}
 
-	// print adxl345
 	for(uint8_t axis = 0; axis <= 2; axis++) {
 		adxl345_values[axis] = 23;
 	}
 
-	// print capsense
 	for(uint8_t capsense_chip = 0; capsense_chip <= 1; capsense_chip++) {
 		capsense_values[capsense_chip] = 42;
 	}

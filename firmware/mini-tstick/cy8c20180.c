@@ -9,13 +9,13 @@
 //  Chip #1 is the upper chip, responsible for channels 8-15
 
 #include "includes/cy8c20180.h"
+#include "includes/io.h"
 
 void cy8c20180_config(void) {
 	//  First, we will configure the chip addresses
 	//  Chip #0 will be disabled to make Chip #1 be the only one with address 0x00
 	//  Then Chip #1 aka. 0x00 will be set to have address 0x01, and finally
 	//  Chip #0 will be enabled again.
-
 
 	// put chip #0 in reset/deactivate it by pulling XRES_PIN low
 	XRES_PORT_REGISTER |= _BV(XRES_PIN);
@@ -33,12 +33,14 @@ void cy8c20180_config(void) {
   twi_write(0x69);
 	twi_stop();
 
+  long_delay(20);
   // chip #2: change the I2C_ADDR_DM register to I2C_ADDR1
 	twi_start(I2C_ADDR0);
   twi_write(I2C_ADDR_DM);
 	twi_write(I2C_ADDR1);
 	twi_stop();
 
+  long_delay(20);
   // chip #2: lock register again for change to take effect
 	twi_start(I2C_ADDR0);
 	twi_write(I2C_DEV_LOCK);
@@ -47,13 +49,15 @@ void cy8c20180_config(void) {
   twi_write(0xC3);
 	twi_stop();
 
+  long_delay(20);
   // chip #2 now has the I2C address I2C_ADDR1
 
 	// activate chip #0 again
 	XRES_PORT &= ~_BV(XRES_PIN);
+  long_delay(20);
 
 	// configure capsense ports for both chips, 0x00 & 0x01
-  for (uint8_t id=0; id<2; id++) {
+  for (uint8_t id=0; id<=1; id++) {
     // switch to setup mode
 		twi_start(id);
 		twi_write(COMMAND_REG);
@@ -83,28 +87,33 @@ void cy8c20180_config(void) {
   }
 }
 
-
 uint8_t cy8c20180_read(uint8_t address) {
+	// request data like described in the datasheet page 9 - one byte of data
+	// BUG: data only reads from chip #0 when both chips are sampled, and turns
+	// 			up in the space for chip #1 - maybe it takes too long?
+	
   uint8_t ret = 0x00;
-  
+	
   // request Register 00h: INPUT_PORT0
   twi_start(address);
   twi_write(INPUT_PORT0);
   twi_stop();
-  
-//  Wire.requestFrom(address, 1);
-//  while (!Wire.available()) {}
-//  ret = Wire.receive() << 4;
-//  
-//  // request Register 01h: INPUT_PORT1
-//  twi_start(address);
-//  Wire.send(INPUT_PORT1);
-//  twi_stop();
-  
-//  Wire.requestFrom(address, 1);
-//  while (!Wire.available()) {}
- // ret |= Wire.receive();
-  
+
+  twi_start(address);
+	ret = twi_readNak() << 4;
+  twi_stop();
+
+	if (address == 0) { ret |= 1 << 4; }
+
+  // request Register 01h: INPUT_PORT1
+  twi_start(address);
+  twi_write(INPUT_PORT1);
+  twi_stop();
+
+  twi_start(address);
+	ret |= twi_readNak();
+  twi_stop();
+
   return ret;
 }
 
