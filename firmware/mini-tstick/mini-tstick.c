@@ -4,6 +4,10 @@
  *  Created by Jan Anlauff <janlauff at cim dot mcgill dot ca> (C) 2011
  *  ADXL345 functionality based on code from Sebastian Zehe
  *  I2C master library by Peter Fleury 
+ *
+ *
+ *  TODO:
+ *  	- finish capsense read
  */
 
 #include "includes/mini-tstick.h"
@@ -28,33 +32,71 @@ void init(void) {
 	uart_init();
 	FILE uart_str = FDEV_SETUP_STREAM(uart_putcs, NULL, _FDEV_SETUP_RW);
 	stdout = &uart_str;
+	zero_arrays();
 	adc_init();
 	twi_init();
 	adxl345_init();
-	cy8c20180_config();
+	//cy8c20180_config();
 	led_on();
 }
 
 void sample_adcs() {
-	for(uint8_t adc_id = 0; adc_id < ADC_COUNT; adc_id++) {
-		values[adc_ids[adc_id]] = adc_read(adcs[adc_id]);
+	for(uint8_t adc = 0; adc< ADC_COUNT; adc++) {
+		adc_values[adc] = adc_read(adcs[adc]);
 	}
 }
 
 void sample_adxl345(void) {
 	adxl345_read_values(adxl345_values);
-	for(uint8_t axis=0; axis < 3; axis++) {
-		values[adxl345_ids[axis]] = adxl345_values[axis];
+}
+
+void sample_capsense() {
+	for (uint8_t addr=0; addr<=1; addr++) {
+		capsense_values[addr] = cy8c20180_read(addr);
 	}
 }
 
 void uart_transfer_values_csv(void) {
-	for (uint8_t sensor_id = 0; sensor_id < SENSOR_COUNT; sensor_id++) {
-		itoa(values[sensor_id], buffer, 10);
+	// print adc
+	for(uint8_t adc = 0; adc < ADC_COUNT; adc++) {
+		itoa(adc_values[adc], buffer, 10);
 		uart_puts(buffer);
 		uart_puts(",");
 	}
+
+	// print adxl345
+	for(uint8_t axis = 0; axis <= 2; axis++) {
+		itoa(adxl345_values[axis], buffer, 10);
+		uart_puts(buffer);
+		uart_puts(",");
+	}
+
+	// print capsense
+	for(uint8_t capsense_chip = 0; capsense_chip <= 1; capsense_chip++) {
+		itoa(capsense_values[capsense_chip], buffer, 10);
+		uart_puts(buffer);
+		uart_puts(",");
+	}
+
+
 	uart_puts("\r\n");
 	uart_flush();
+}
+
+void zero_arrays(void) {
+	// print adc
+	for(uint8_t adc = 0; adc < ADC_COUNT; adc++) {
+		adc_values[adc] = 17;
+	}
+
+	// print adxl345
+	for(uint8_t axis = 0; axis <= 2; axis++) {
+		adxl345_values[axis] = 23;
+	}
+
+	// print capsense
+	for(uint8_t capsense_chip = 0; capsense_chip <= 1; capsense_chip++) {
+		capsense_values[capsense_chip] = 42;
+	}
 }
 

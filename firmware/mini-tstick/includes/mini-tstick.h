@@ -19,28 +19,23 @@
 
 #define UART_BAUD_RATE 57600
 
-#define SENSOR_COUNT 9 // number of total sensor channels
+//#define SENSOR_COUNT 9 // number of total sensor channels
 #define ADC_COUNT 6 // number of adc channels
 
-uint16_t values[SENSOR_COUNT]; // stores all sensor values
-uint16_t adxl345_values[3];
-char buffer[10]; // buffer for sprintf/atoi, max 65535+\0+label+:+tab
+uint16_t adxl345_values[3]; // three axis
+uint8_t adc_values[ADC_COUNT]; // two chips a 8 bits
+uint8_t capsense_values[2]; // two chips a 8 bits
+const uint8_t adcs[ADC_COUNT] = {0,1,2,3,6,7}; // which ADCs to sample
 
-// labels of all sensor channels
-const char sensor_labels[SENSOR_COUNT] = "ABCDEFGHI";
-// which of those channels are ADCs (some are read via SPI)
-const uint8_t adc_ids[ADC_COUNT] = {0,1,2,3,4,5};
-// which ADCs to sample
-const uint8_t adcs[ADC_COUNT] = {0,1,2,3,6,7};
-// which of those are adxl345 channels
-const uint8_t adxl345_ids[3] = {6,7,8};
+char buffer[10]; // buffer for sprintf/atoi, max 65535+\0+label+:+tab
 
 uint8_t incoming_char;
 
 void init(void);
+void zero_arrays(void);
 void sample_adcs(void);
 void sample_adxl345(void);
-void sample_capsens(void);
+void sample_capsense(void);
 
 void uart_transfer_values_csv(void);
 #endif /* _MINI-TSTICK_H */
