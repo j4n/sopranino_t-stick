@@ -37,7 +37,7 @@ void init(void) {
 	adc_init();
 	twi_init();
 	adxl345_init();
-	cy8c20180_config();
+	//cy8c20180_config(); // not needed, stored in NVM
 	//led_on();
 }
 
@@ -55,6 +55,7 @@ void sample_capsense() {
 //	for (uint8_t addr=0; addr<=1; addr++) {
 		capsense_values[0] = cy8c20180_read(0);
 		capsense_values[1] = cy8c20180_read(1);
+		//capsense_values[1] = cy8c20180_read(1);
 //	}
 }
 
@@ -79,7 +80,6 @@ void uart_transfer_values_csv(void) {
 		uart_puts(buffer);
 		uart_puts(",");
 	}
-
 
 	uart_puts("\r\n");
 	uart_flush();

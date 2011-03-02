@@ -12,6 +12,12 @@
 #include "includes/io.h"
 
 void cy8c20180_config(void) {
+	// this has actually never worked, used the arduino sketch 
+	// in ../test_capsense/firmware to set the variables and write
+	// them to the non-volatile memory (NVM)
+	// note that it takes 120 ms for the chip to do that!
+
+
 	//  First, we will configure the chip addresses
 	//  Chip #0 will be disabled to make Chip #1 be the only one with address 0x00
 	//  Then Chip #1 aka. 0x00 will be set to have address 0x01, and finally
@@ -95,25 +101,30 @@ uint8_t cy8c20180_read(uint8_t address) {
   uint8_t ret = 0x00;
 	
   // request Register 00h: INPUT_PORT0
-  twi_start(address);
+
+	XRES_PORT_REGISTER |= _BV(XRES_PIN);
+	//XRES_PORT |= _BV(XRES_PIN);
+
+  twi_start_wait(address);
   twi_write(INPUT_PORT0);
   twi_stop();
 
-  twi_start(address);
+  twi_start_wait(address);
 	ret = twi_readNak() << 4;
   twi_stop();
 
 //	if (address == 0) { ret |= 1 << 4; }
 
   // request Register 01h: INPUT_PORT1
-  twi_start(address);
+  twi_start_wait(address);
   twi_write(INPUT_PORT1);
   twi_stop();
 
-  twi_start(address);
+  twi_start_wait(address);
 	ret |= twi_readNak();
   twi_stop();
 
+	XRES_PORT &= ~_BV(XRES_PIN);
   return ret;
 }
 

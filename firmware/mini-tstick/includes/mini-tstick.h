@@ -22,10 +22,10 @@
 //#define SENSOR_COUNT 9 // number of total sensor channels
 #define ADC_COUNT 6 // number of adc channels
 
-uint16_t adxl345_values[3]; // three axis
 uint8_t adc_values[ADC_COUNT]; // two chips a 8 bits
-uint8_t capsense_values[2]; // two chips a 8 bits
 const uint8_t adcs[ADC_COUNT] = {0,1,2,3,6,7}; // which ADCs to sample
+uint16_t adxl345_values[3]; // three axis
+uint8_t capsense_values[2]; // two chips a 8 bits
 
 char buffer[10]; // buffer for sprintf/atoi, max 65535+\0+label+:+tab
 
