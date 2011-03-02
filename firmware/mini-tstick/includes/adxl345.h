@@ -12,7 +12,7 @@
 #include <avr/io.h>
 #include "io.h"
 #include "utils.h"
-#include "twimaster.h"
+#include "i2cmaster.h"
 
 #define ADXL345_ADDR 0xA6 // SDO tied to GND
 

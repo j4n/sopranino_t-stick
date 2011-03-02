@@ -15,13 +15,13 @@
 int main(void) {
 	init();
 	while (1) {
-		incoming_char = uart_getc_wait();
+		//incoming_char = uart_getc_wait();
 		sample_adcs();
 		//led_off();
 		//sample_adxl345();
 		//led_on();
 		sample_capsense();
-		_delay_ms(1);
+		_delay_ms(10);
 		uart_transfer_values_csv();
 	}
 }
@@ -35,7 +35,7 @@ void init(void) {
 	stdout = &uart_str;
 	zero_arrays();
 	adc_init();
-	twi_init();
+	i2c_init();
 	adxl345_init();
 	//cy8c20180_config(); // not needed, stored in NVM
 	//led_on();
@@ -52,11 +52,8 @@ void sample_adxl345(void) {
 }
 
 void sample_capsense() {
-//	for (uint8_t addr=0; addr<=1; addr++) {
-		capsense_values[0] = cy8c20180_read(0);
-		capsense_values[1] = cy8c20180_read(1);
-		//capsense_values[1] = cy8c20180_read(1);
-//	}
+		capsense_values[0] = cy8c20180_read(0x00);
+		capsense_values[1] = cy8c20180_read(0x01);
 }
 
 void uart_transfer_values_csv(void) {

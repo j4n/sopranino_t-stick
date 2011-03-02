@@ -9,7 +9,7 @@
 
 #include <avr/pgmspace.h>
 #include "utils.h"
-#include "twimaster.h"
+#include "i2cmaster.h"
 
 // Capsense Chip XRES Reset Pin
 #define XRES_PIN PD5

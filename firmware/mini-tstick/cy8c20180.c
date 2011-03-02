@@ -32,28 +32,28 @@ void cy8c20180_config(void) {
   // CONFIGURE CHIP #1
 
 	// unlock the I2C_DEV_LOCK register with magic codes
-	twi_start(I2C_ADDR0);
-	twi_write(I2C_DEV_LOCK);
-  twi_write(0x3C);
-  twi_write(0xA5);
-  twi_write(0x69);
-	twi_stop();
+	i2c_start(I2C_ADDR0);
+	i2c_write(I2C_DEV_LOCK);
+  i2c_write(0x3C);
+  i2c_write(0xA5);
+  i2c_write(0x69);
+	i2c_stop();
 
   long_delay(20);
   // chip #2: change the I2C_ADDR_DM register to I2C_ADDR1
-	twi_start(I2C_ADDR0);
-  twi_write(I2C_ADDR_DM);
-	twi_write(I2C_ADDR1);
-	twi_stop();
+	i2c_start(I2C_ADDR0);
+  i2c_write(I2C_ADDR_DM);
+	i2c_write(I2C_ADDR1);
+	i2c_stop();
 
   long_delay(20);
   // chip #2: lock register again for change to take effect
-	twi_start(I2C_ADDR0);
-	twi_write(I2C_DEV_LOCK);
-  twi_write(0x96);
-  twi_write(0x5A);
-  twi_write(0xC3);
-	twi_stop();
+	i2c_start(I2C_ADDR0);
+	i2c_write(I2C_DEV_LOCK);
+  i2c_write(0x96);
+  i2c_write(0x5A);
+  i2c_write(0xC3);
+	i2c_stop();
 
   long_delay(20);
   // chip #2 now has the I2C address I2C_ADDR1
@@ -65,30 +65,30 @@ void cy8c20180_config(void) {
 	// configure capsense ports for both chips, 0x00 & 0x01
   for (uint8_t id=0; id<=1; id++) {
     // switch to setup mode
-		twi_start(id);
-		twi_write(COMMAND_REG);
-		twi_write(0x08);
-		twi_stop();
+		i2c_start(id);
+		i2c_write(COMMAND_REG);
+		i2c_write(0x08);
+		i2c_stop();
     
     // setup CS_ENABLE0 register
-    twi_start(id);
-    twi_write(CS_ENABLE0);
-    twi_write(0x0F);
-    twi_stop();
+    i2c_start(id);
+    i2c_write(CS_ENABLE0);
+    i2c_write(0x0F);
+    i2c_stop();
  //   delay(DEBUG_DELAY);
     
     // setup CS_ENABLE1 register
-    twi_start(id);
-    twi_write(CS_ENABLE1);
-    twi_write(0x0F);
-    twi_stop();
+    i2c_start(id);
+    i2c_write(CS_ENABLE1);
+    i2c_write(0x0F);
+    i2c_stop();
 //    delay(DEBUG_DELAY);
     
     // switch to normal mode
-    twi_start(id);
-    twi_write(COMMAND_REG);
-    twi_write(0x07);
-    twi_stop();
+    i2c_start(id);
+    i2c_write(COMMAND_REG);
+    i2c_write(0x07);
+    i2c_stop();
   //  delay(DEBUG_DELAY);
   }
 }
@@ -102,29 +102,25 @@ uint8_t cy8c20180_read(uint8_t address) {
 	
   // request Register 00h: INPUT_PORT0
 
-	XRES_PORT_REGISTER |= _BV(XRES_PIN);
-	//XRES_PORT |= _BV(XRES_PIN);
+  i2c_start_wait(address);
+  i2c_write(INPUT_PORT0);
+  i2c_stop();
 
-  twi_start_wait(address);
-  twi_write(INPUT_PORT0);
-  twi_stop();
-
-  twi_start_wait(address);
-	ret = twi_readNak() << 4;
-  twi_stop();
+  i2c_start_wait(address);
+	ret = i2c_readNak() << 4;
+  i2c_stop();
 
 //	if (address == 0) { ret |= 1 << 4; }
 
   // request Register 01h: INPUT_PORT1
-  twi_start_wait(address);
-  twi_write(INPUT_PORT1);
-  twi_stop();
+  i2c_start_wait(address);
+  i2c_write(INPUT_PORT1);
+  i2c_stop();
 
-  twi_start_wait(address);
-	ret |= twi_readNak();
-  twi_stop();
+  i2c_start_wait(address);
+	ret |= i2c_readNak();
+  i2c_stop();
 
-	XRES_PORT &= ~_BV(XRES_PIN);
   return ret;
 }
 
