@@ -5,6 +5,7 @@
 
 # controller
 MCU = atmega168
+#MCU = atmega328
 
 # frequency
 #F_CPU  = 14745600UL
@@ -43,7 +44,7 @@ PROG = arduino
 DEV = /dev/tty.usbserial-A400f7TV
 #DEV = /dev/tty.usbserial-A600aSmA
 # further flags for avrdude
-AVRDUDE_FLAGS = -V
+AVRDUDE_FLAGS = 
 
 ####################################################
 # 'make' configuration
@@ -106,6 +107,9 @@ ifeq ($(MCU),atmega88)
 endif
 ifeq ($(MCU),atmega168)
 	AVRDUDE_MCU=m168
+endif
+ifeq ($(MCU),atmega328)
+	AVRDUDE_MCU=m328p
 endif
 
 AVRDUDE_FLAGS += -p $(AVRDUDE_MCU) -b 19200

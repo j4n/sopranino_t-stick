@@ -1,6 +1,6 @@
 // vi:ft=c
 // Test program for reading CY8C201xx using I2C
-// Joseph Malloch 2011
+// Joseph Malloch 2011, Modified by Jan Anlauff for mini-stick
 // Input Devices and Music Interaction Lab
 
 // See the CY8C201xx Register Reference Guide for more info:
@@ -102,25 +102,29 @@ void setup() {
 }
 
 void loop() {
-  byte i;
-  
-//  while (Serial.read() == -1) {
- //   ; // do nothing until polled
-  //}
-  
-  // get the touch values from 2 x CY8C201xx chips
+//  byte i;
+while (Serial.read() == -1) {
+   ; // do nothing until polled
+}
 //  slipOut(readTouch(I2C_ADDR0));
-  //slipOut(readTouch(I2C_ADDR1));
-//  
-  Serial.print("Reading Chip 0: ");
-  Serial.print(readTouch(I2C_ADDR0),BIN);
-  
-  Serial.print(", Reading Chip 1: ");
- Serial.print(readTouch(I2C_ADDR1),BIN);
-
+//	slipOut(readTouch(I2C_ADDR1));
 //  Serial.print(delimiterChar, BYTE);
-  Serial.println();
-	delay(50);
+  
+// get the touch values from 2 x CY8C201xx chips
+  
+//  Serial.print("Reading Chip 0: ");
+//  Serial.print(readTouch(I2C_ADDR0),BIN);
+//  Serial.print(", Reading Chip 1: ");
+//  Serial.print(readTouch(I2C_ADDR1),BIN);
+
+  Serial.print(readTouch(I2C_ADDR0),BYTE);
+  Serial.print(readTouch(I2C_ADDR1),BYTE); 
+//    byte foo = 0b10101010;
+ //   Serial.print(foo,BYTE);
+//    Serial.print(0x42);
+
+//  Serial.println();
+//  delay(100);
 }
 
 byte readTouch(int address) {

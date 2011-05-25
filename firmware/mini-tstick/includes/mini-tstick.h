@@ -19,11 +19,12 @@
 
 #define UART_BAUD_RATE 57600
 
-//#define SENSOR_COUNT 9 // number of total sensor channels
-#define ADC_COUNT 6 // number of adc channels
+//#define ADC_COUNT 6 // number of adc channels
+#define ADC_COUNT 4 // number of adc channels
+const uint8_t adcs[ADC_COUNT] = {2,3,6,7}; // which ADCs to sample
+//const uint8_t adcs[ADC_COUNT] = {0,1,2,3,6,7}; // those are connected
 
 uint8_t adc_values[ADC_COUNT]; // two chips a 8 bits
-const uint8_t adcs[ADC_COUNT] = {0,1,2,3,6,7}; // which ADCs to sample
 uint16_t adxl345_values[3]; // three axis
 uint8_t capsense_values[2]; // two chips a 8 bits
 

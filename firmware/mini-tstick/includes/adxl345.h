@@ -14,7 +14,8 @@
 #include "utils.h"
 #include "i2cmaster.h"
 
-#define ADXL345_ADDR 0xA6 // SDO tied to GND
+//#define ADXL345_ADDR 0xA6 // SDO tied to GND
+#define ADXL345_ADDR 0x3A // SDO tied to VCC
 
 void adxl345_init(void);
 uint8_t adxl345_read(uint8_t register_name);
