@@ -28,7 +28,7 @@ void i2c_init(void)
 {
   /* initialize TWI clock: 100 kHz clock, TWPS = 0 => prescaler = 1 */
   
-  TWSR = 0;                         /* no prescaler */
+  TWSR = 3;                         /* no prescaler */
   TWBR = ((F_CPU/SCL_CLOCK)-16)/2;  /* must be > 10 for stable operation */
 
 }/* i2c_init */
