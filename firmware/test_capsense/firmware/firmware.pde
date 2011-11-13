@@ -103,9 +103,9 @@ void setup() {
 
 void loop() {
 //  byte i;
-while (Serial.read() == -1) {
-   ; // do nothing until polled
-}
+//while (Serial.read() == -1) {
+//   ; // do nothing until polled
+//}
 //  slipOut(readTouch(I2C_ADDR0));
 //	slipOut(readTouch(I2C_ADDR1));
 //  Serial.print(delimiterChar, BYTE);
@@ -118,7 +118,9 @@ while (Serial.read() == -1) {
 //  Serial.print(readTouch(I2C_ADDR1),BIN);
 
   Serial.print(readTouch(I2C_ADDR0),BYTE);
+  delay(2);
   Serial.print(readTouch(I2C_ADDR1),BYTE); 
+  delay(5);
 //    byte foo = 0b10101010;
  //   Serial.print(foo,BYTE);
 //    Serial.print(0x42);

@@ -18,9 +18,9 @@ int main(void) {
 		//incoming_char = uart_getc_wait();
 		sample_adcs();
 		//led_off();
-		sample_adxl345();
+//		sample_adxl345();
 		//led_on();
-//		sample_capsense();
+		sample_capsense();
 		_delay_ms(10);
 		uart_transfer_values_csv();
 	}
@@ -36,7 +36,7 @@ void init(void) {
 	zero_arrays();
 	adc_init();
 	i2c_init();
-	adxl345_init();
+//	adxl345_init();
 	//cy8c20180_config(); // not needed, stored in NVM
 	//led_on();
 }
